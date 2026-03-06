@@ -1,0 +1,21 @@
+*/__pycache__
+*/support_files
+*/ouputs
+outputs
+preprocessing/data_preparation.py
+preprocessing/get_sizes_ranges.py
+__pycache__
+timesformer.py
+runs
+weights
+test_linear.py
+test_timesformer.py
+
+# Added for SyncWeld-Net GitHub Push
+venv/
+venv2/
+.env
+datasets/
+*.pth
+*.pt
+.vscode/
