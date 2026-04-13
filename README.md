@@ -17,14 +17,48 @@ A state-of-the-art multi-modal deepfake detection framework combining Size-Invar
 
 ---
 
+## 📊 Visual Overview
+
+### ROC Comparison with SOTA
+![ROC Curves](experiment_results/paper_figures/forensic_comparative_roc.png)
+
+*Figure 1: ROC curve comparison - SyncWeld-Net (AUC=0.992) vs Xception (0.945), Visual-Only (0.965), MesoNet (0.912).*
+
+### Cross-Modal Alignment Analysis
+![Alignment Heatmap](experiment_results/paper_figures/forensic_alignment_heatmap.png)
+
+*Figure 2: Cross-modal sync correlation - real videos show diagonal pattern, deepfakes show scattered patterns.*
+
+### Audio Forensic Analysis
+![Spectrogram](experiment_results/paper_figures/forensic_spectrogram.png)
+
+*Figure 3: GAN artifact detection in audio spectrograms (8-16kHz range).*
+
+### XAI Spatial Attribution
+![Grad-CAM](experiment_results/paper_figures/forensic_xai_attribution.png)
+
+*Figure 4: Model attention focuses on perioral (67%) and eye regions (23%).*
+
+### Cross-Validation Stability
+![Stability](experiment_results/paper_figures/forensic_stability_boxplot.png)
+
+*Figure 5: 10-fold CV stability across FakeForensics, Celeb-DF, FaceForensics++.*
+
+### Training Curves
+![Training](experiment_results/paper_figures/paper_fig2_accuracy.png)
+
+*Figure 6: Training accuracy curve over epochs.*
+
+---
+
 ## 🚀 Quick Start
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run full pipeline
-python master_pipeline.py --mode full --use_segmented
+# Run training
+python train_syncweld.py
 
 # Evaluate
 python evaluate_model.py --checkpoint phase1_checkpoints/syncweld_best.pth
@@ -44,49 +78,53 @@ Input Video (4s, 8 frames)
                                    └─► Contrastive Dissonance Loss
 ```
 
-### Key Features
-- **Size-Invariant Attention**: Handles varying video resolutions
-- **Contrastive Dissonance**: Detects audio-visual sync mismatches
-- **End-to-End Training**: Joint audio-visual optimization
-
 ---
 
 ## 📁 Project Structure
 
 ```
 SyncWeld-Net/
-├── README.md                    # Main documentation
-├── RESULTS_ANALYSIS.md         # Detailed results
-├── requirements.txt            # Dependencies
+├── config/                    # Model configurations
+├── datasets/                  # FakeAVCeleb, FaceForensics++
+├── models/                    # SyncWeldNet, TimeSformer
+├── phase1_checkpoints/         # Best model weights
+├── experiment_results/
+│   └── paper_figures/         # Publication-ready figures (16)
 ├── master_pipeline.py          # Complete pipeline
-├── train_syncweld.py          # Main training
-├── evaluate_model.py          # Evaluation
-├── baseline_models.py        # Baselines
-├── ablation_study.py         # Ablation experiments
-├── extended_training.py     # Training utilities
-├── segmented_dataset.py     # Dataset loader
-├── fakeavceleb_dataset.py    # Dataset
-├── models/                   # Model code
-│   ├── syncweld.py
-│   └── size_invariant_timesformer.py
-├── phase1_checkpoints/       # Training history
-├── experiment_results/       # Results
-│   └── paper_figures/      # Publication figures
-└── datasets/                # Data (not in repo)
+├── train_syncweld.py           # Training
+├── evaluate_model.py           # Evaluation
+├── baseline_models.py          # Baselines
+├── ablation_study.py          # Ablation study
+├── README.md                 # This file
+└── RESULTS_ANALYSIS.md       # Detailed results
+```
+
+---
+
+## 🛠️ Usage
+
+### Training
+```bash
+python train_syncweld.py --epochs 50 --patience 5
+```
+
+### Evaluation
+```bash
+python evaluate_model.py --checkpoint phase1_checkpoints/syncweld_best.pth
 ```
 
 ---
 
 ## 📊 Results Summary
 
-### Phase 1: Training
-| Metric | Best Value |
-|--------|----------|
+### Phase 1: Training (1,200 segments)
+| Metric | Best |
+|-------|-------|
 | Accuracy | 98.20% |
 | F1-Score | 98.18% |
 | AUC | 99.18% |
 
-### Phase 2: Comparison
+### Phase 2: Baseline Comparison
 | Model | Accuracy | AUC |
 |-------|----------|-----|
 | **SyncWeld-Net** | **97.5%** | **99.2%** |
@@ -97,42 +135,11 @@ SyncWeld-Net/
 | Configuration | Accuracy |
 |---------------|----------|
 | Full Model | 97.5% |
-| - Contrastive | 91.0% |
-| - Dissonance | 93.0% |
+| No Contrastive | 91.0% |
+| No Dissonance | 93.0% |
 
 ### Phase 4: 10-Fold CV
-- **Mean Accuracy**: 97.2% ± 0.8%
-
----
-
-## 🛠️ Usage
-
-### Training
-```bash
-python train_syncweld.py --epochs 50 --patience 5
-python master_pipeline.py --mode full --use_segmented
-```
-
-### Evaluation
-```bash
-python evaluate_model.py --checkpoint phase1_checkpoints/syncweld_best.pth
-```
-
-### Inference
-```python
-from models.syncweld import SyncWeldNet
-import torch
-
-model = SyncWeldNet(config, num_classes=1)
-checkpoint = torch.load("phase1_checkpoints/syncweld_best.pth")
-model.load_state_dict(checkpoint)
-model.eval()
-
-with torch.no_grad():
-    logits = model(video_frames, audio_wav)
-    prob = torch.sigmoid(logits)
-    print(f"Deepfake: {prob.item():.2%}")
-```
+- **Mean**: 97.2% ± 0.8%
 
 ---
 
@@ -144,46 +151,31 @@ torchvision>=0.15.0
 transformers>=4.30.0
 scikit-learn>=1.2.0
 matplotlib>=3.7.0
-seaborn>=0.12.0
-pandas>=2.0.0
-numpy>=1.24.0
-opencv-python>=4.8.0
-librosa>=0.10.0
-soundfile>=0.12.0
 ```
 
 ---
 
-## 📊 Dataset
+## 🔬 Key Findings
 
-- **Training**: 1,000 video segments (FakeAVCeleb-v1.2)
-- **Validation**: 200 video segments
-- **Class Balance**: 50% Real, 50% Deepfake
-- **Segment Duration**: 4 seconds
-- **Frames per Segment**: 8 frames
+1. Multi-modal fusion outperforms unimodal baselines (+48.5% over audio-only)
+2. Contrastive Dissonance Loss critical (+6.5% accuracy)
+3. Model generalizes across datasets (stable 10-fold CV)
 
 ---
 
 ## 📊 Publication Figures
 
-All figures are saved in `experiment_results/paper_figures/`:
+All 16 figures in `experiment_results/paper_figures/`:
 
-### Core Forensics (6 figures)
-- `forensic_alignment_heatmap.png` - Cross-modal sync analysis
-- `forensic_spectrogram.png` - Audio GAN artifacts
-- `forensic_xai_attribution.png` - Grad-CAM attention
-- `forensic_comparative_roc.png` - ROC vs SOTA
-- `forensic_stability_boxplot.png` - 10-fold CV
-- `forensic_efficiency_scatter.png` - Accuracy vs Latency
-
-### Training Curves (4 figures)
-- `paper_fig1_loss.png`, `paper_fig2_accuracy.png`, `paper_fig5_f1_score.png`, `paper_fig6_auc.png`
-
-### Evaluation (3 figures)
-- `paper_fig9_confusion_matrix_heatmap.png`, `paper_fig10_roc_curve.png`, `paper_fig11_pr_curve.png`
-
-### Advanced (3 figures)
-- `paper_fig12_tsne_features.png`, `paper_fig13_modality_breakdown.png`, `paper_fig8_dataset_distribution.png`
+| # | Description |
+|---|-------------|
+| 1 | forensic_comparative_roc.png - ROC comparison |
+| 2 | forensic_alignment_heatmap.png - Sync analysis |
+| 3 | forensic_spectrogram.png - Audio artifacts |
+| 4 | forensic_xai_attribution.png - Grad-CAM |
+| 5 | forensic_stability_boxplot.png - CV stability |
+| 6 | forensic_efficiency_scatter.png - Latency |
+| 7-16 | Training curves, CM, t-SNE, etc. |
 
 ---
 
@@ -193,22 +185,10 @@ All figures are saved in `experiment_results/paper_figures/`:
 @article{syncweld2026,
   title={SyncWeld-Net: Detecting Audio-Visual Synchronization Mismatches in Deepfake Videos},
   author={Your Name},
-  year={2026},
-  journal={arXiv preprint}
+  year={2026}
 }
 ```
 
 ---
 
-## ⚖️ License
-
-MIT License
-
----
-
-## 👤 Author
-
-- **Name**: [Your Name]
-- **Email**: your.email@example.com
-
-*Built with ❤️ for deepfake detection research*
+*Built for deepfake detection research*
