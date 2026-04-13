@@ -6,6 +6,55 @@ A deep learning framework for detecting face swapping and lip-syncing deepfakes 
 
 ---
 
+## 🎯 What is Deepfake Detection?
+
+Deepfakes are synthetic media where AI is used to replace someone's likeness in images or videos. They can be used for:
+- **Malicious**: Spreading fake news, blackmail, fraud
+- **Entertainment**: Face swapping in movies, dubbing
+
+Detecting deepfakes is crucial for maintaining trust in digital media.
+
+---
+
+## 🔍 Why Audio-Visual Synchronization?
+
+Modern deepfakes often have **lip-syncing issues** where the mouth movements don't perfectly match the audio. This happens because:
+
+1. **Generation artifacts**: GANs struggle to maintain sync between visual and audio streams
+2. **Temporal mismatches**: Frame-by-frame audio generation leads to timing errors
+3. **Frequency inconsistencies**: Different generation pipelines for audio vs video
+
+SyncWeld-Net detects these **synchronization mismatches** between:
+- **Visual**: Lip movements, facial expressions
+- **Audio**: Phonemes, speech prosody
+
+---
+
+## 💡 How SyncWeld-Net Works
+
+### The Core Insight
+
+> Real videos have perfect audio-visual sync. Deepfakes don't.
+
+### Step-by-Step
+
+1. **Extract Features**
+   - Visual → TimeSformer → 512D visual features
+   - Audio → Wav2Vec2.0 → 512D audio features
+
+2. **Cross-Modal Fusion**
+   - Combine both modalities using attention
+   - Learn which features correlate
+
+3. **Detect Discordance**
+   - Use Contrastive Dissonance Loss to detect sync violations
+   - Learn that "mouth open + silent" = fake pattern
+
+4. **Classify**
+   - Binary classification: Real vs Deepfake
+
+---
+
 ## 📊 Results
 
 | Metric | Value |
@@ -38,6 +87,22 @@ A deep learning framework for detecting face swapping and lip-syncing deepfakes 
 ![CV](experiment_results/paper_figures/forensic_stability_boxplot.png)
 
 *Consistent performance across FakeForensics, Celeb-DF, and FaceForensics++ datasets*
+
+---
+
+## 🆚 Comparison with Other Approaches
+
+| Approach | Description | Limitation |
+|---------|-------------|------------|
+| **Visual-Only** | Uses CNNs on video frames | Misses audio cues, fooled by visual-only forgeries |
+| **Audio-Only** | Uses CNNs/RNNs on audio | Misses visual cues, poor performance (~49%) |
+| **SyncWeld-Net** | Cross-modal sync analysis | **Best of both worlds** |
+
+### Why Multi-Modal Wins
+
+- Audio-only alone is near random (49%) on this dataset
+- Adding audio-visual sync detection improves accuracy by +1.5%
+- Catches forgeries that appear visually perfect but have audio sync issues
 
 ---
 
@@ -129,30 +194,31 @@ else:
 ┌─────────────────────────────────────────────────────────────┐
 │                    Input: 4s Video Clip                   │
 │              (8 frames @ 160x160 + 22kHz audio)           │
-└──────────────────────��──────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────┘
                               │
          ┌────────────────────┴────────────────────┐
          ▼                                         ▼
 ┌─────────────────────┐                 ┌─────────────────────┐
-│  TimeSformer        │                 │   Wav2Vec2.0       │
-│  (Visual Branch)    │                 │   (Audio Branch)   │
-│  - 9 transformer    │                 │   - Large (53-lang) │
-│    layers          │                 │   - 512-dim output │
-│  - 512-dim output  │                 │                     │
+│  TimeSformer        │                 │   Wav2Vec2.0      │
+│  (Visual Branch)    │                 │   (Audio Branch)  │
+│                     │                 │                   │
+│  - 9 transformer   │                 │  - Large (53 lang) │
+│    layers          │                 │  - 512-dim output │
+│  - 512-dim output  │                 │                   │
 └─────────────────────┘                 └─────────────────────┘
          │                                         │
          └────────────────────┬────────────────────┘
                               ▼
               ┌─────────────────────────────────┐
               │   Cross-Modal Fusion Layer      │
-              │   - Multi-head attention        │
-              │   - Contrastive Dissonance Loss │
+              │   - Multi-head attention       │
+              │   - Contrastive Dissonance    │
               └─────────────────────────────────┘
                               │
                               ▼
               ┌─────────────────────────────────┐
-              │   Binary Classifier             │
-              │   (Real vs Deepfake)            │
+              │   Binary Classifier            │
+              │   (Real vs Deepfake)           │
               └─────────────────────────────────┘
 ```
 
@@ -217,7 +283,7 @@ else:
 ### Phase 4: 10-Fold Cross-Validation
 
 | Fold | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|------|---|---|---|---|---|---|---|---|---|---|
+|------|---|---|---|---|---|---|---|---|---|---|---|
 | Accuracy | 98 | 97 | 98 | 96 | 97 | 98 | 97 | 96 | 97 | 98 |
 
 **Mean: 97.2% ± 0.8%**
@@ -241,8 +307,8 @@ SyncWeld-Net/
 ├── evaluate_model.py            # Evaluation
 ├── baseline_models.py           # Baseline comparisons
 ├── segmented_dataset.py         # Dataset loader
-├── README.md                     # This file
-└── RESULTS_ANALYSIS.md          # Detailed results
+├── README.md                   # This file
+└── RESULTS_ANALYSIS.md        # Detailed results
 ```
 
 ---
