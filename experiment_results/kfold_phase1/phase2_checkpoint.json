@@ -1,0 +1,11 @@
+{
+  "completed_models": ["audio_only"],
+  "audio_results": {
+    "accuracy": 0.49,
+    "precision": 0.48484848484848486,
+    "recall": 1.0,
+    "f1": 0.6530612244897959,
+    "auc": 0.6207431891025641,
+    "train_time": 1259.1234347820282
+  }
+}

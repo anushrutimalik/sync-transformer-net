@@ -15,7 +15,8 @@ def main():
     aud_shape = None
     
     for i in tqdm(range(len(dataset))):
-        vis, aud, lbl = dataset[i]
+        vi
+        s, aud, lbl = dataset[i]
         
         if vis_shape is None:
             vis_shape = vis.shape
