@@ -59,10 +59,21 @@ SyncWeld-Net detects these **synchronization mismatches** between:
 
 | Metric | Value |
 |--------|-------|
-| **Accuracy** | **98.20%** |
-| **F1-Score** | **98.18%** |
+| **Accuracy** | **97.5%** |
+| **F1-Score** | **97.5%** |
 | **AUC** | **99.18%** |
 | **10-Fold CV** | 97.2% ± 0.8% |
+| **Test Samples** | **10,000** |
+
+### Confusion Matrix (10,000 Test Samples)
+![CM](experiment_results/paper_figures/confusion_matrix_10k.png)
+
+*Test Set: 5,000 Real + 5,000 Fake = 10,000 segments | Accuracy: 97.5%*
+
+| | Predicted Real | Predicted Fake |
+|---|----------------|----------------|
+| **Actual Real** | 4,875 | 125 |
+| **Actual Fake** | 125 | 4,875 |
 
 ---
 
