@@ -67,36 +67,51 @@ SyncWeld-Net detects these **synchronization mismatches** between:
 | **10-Fold CV** | 97.2% ± 0.8% |
 
 ### Confusion Matrix (10,000 Test Samples)
+
 ![CM](experiment_results/paper_figures/confusion_matrix_10k.png)
+
+*Figure: 97.5% accuracy on 10,000 test samples (5,000 Real + 5,000 Fake)*
 
 | | Predicted Real | Predicted Fake |
 |---|----------------|----------------|
-| **Actual Real** | 4,875 | 125 |
-| **Actual Fake** | 125 | 4,875 |
+| **Actual Real** | 4,875 (TN) | 125 (FP) |
+| **Actual Fake** | 125 (FN) | 4,875 (TP) |
 
-**Test Set: 5,000 Real + 5,000 Fake = 10,000 segments**
+| Metric | Count |
+|--------|-------|
+| **True Positives** | 4,875 |
+| **True Negatives** | 4,875 |
+| **False Positives** | 125 |
+| **False Negatives** | 125 |
+| **Total Correct** | 9,750 / 10,000 |
 
 ---
 
 ## 🔬 Key Visualizations
 
 ### ROC Curve Comparison with SOTA
+
 ![ROC](experiment_results/paper_figures/forensic_comparative_roc.png)
 
-*SyncWeld-Net achieves AUC=0.992 vs Xception (0.945), Visual-Only (0.965), MesoNet (0.912)*
+*Figure 1: SyncWeld-Net achieves AUC=0.992 vs Xception (0.945), Visual-Only (0.965), MesoNet (0.912)*
 
 ### Cross-Modal Alignment Heatmap
+
 ![Sync](experiment_results/paper_figures/forensic_alignment_heatmap.png)
 
-*Real videos show diagonal sync correlation (perfect alignment); deepfakes show scattered/off-diagonal patterns (sync mismatch)*
+*Figure 2: Real videos show diagonal sync correlation (perfect alignment); deepfakes show scattered/off-diagonal patterns (sync mismatch)*
 
 ### XAI: Grad-CAM Attention
+
 ![XAI](experiment_results/paper_figures/forensic_xai_attribution.png)
 
-*Model attention focuses on perioral region (67%) and eye reflections (23%), proving it detects lip-sync errors rather than background*
+*Figure 3: Model attention focuses on perioral region (67%) and eye reflections (23%), proving it detects lip-sync errors rather than background*
 
 ### 10-Fold Cross-Validation Stability
+
 ![CV](experiment_results/paper_figures/forensic_stability_boxplot.png)
+
+*Figure 4: Consistent 97.2% ± 0.8% across 10 folds on FakeForensics, Celeb-DF, FaceForensics++*
 
 *Consistent performance across FakeForensics, Celeb-DF, and FaceForensics++ datasets*
 
