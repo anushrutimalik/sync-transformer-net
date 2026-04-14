@@ -2,60 +2,65 @@
 
 **Paper**: *SyncWeld-Net: Detecting Audio-Visual Synchronization Mismatches in Deepfake Videos*
 
+**Author**: Angel Gupta
+
 A deep learning framework for detecting face swapping and lip-syncing deepfakes through audio-visual cross-modal synchronization analysis.
 
 ---
 
-## 🎯 What is Deepfake Detection?
+## 1. What is Deepfake Detection?
 
-Deepfakes are synthetic media where AI is used to replace someone's likeness in images or videos. They can be used for:
-- **Malicious**: Spreading fake news, blackmail, fraud
-- **Entertainment**: Face swapping in movies, dubbing
+Deepfakes are synthetic media where AI is used to replace someone's likeness in images or videos.
 
-Detecting deepfakes is crucial for maintaining trust in digital media.
+**Applications:**
+- Malicious: Spreading fake news, blackmail, fraud
+- Entertainment: Face swapping in movies, dubbing
 
----
-
-## 🔍 Why Audio-Visual Synchronization?
-
-Modern deepfakes often have **lip-syncing issues** where the mouth movements don't perfectly match the audio. This happens because:
-
-1. **Generation artifacts**: GANs struggle to maintain sync between visual and audio streams
-2. **Temporal mismatches**: Frame-by-frame audio generation leads to timing errors
-3. **Frequency inconsistencies**: Different generation pipelines for audio vs video
-
-SyncWeld-Net detects these **synchronization mismatches** between:
-- **Visual**: Lip movements, facial expressions
-- **Audio**: Phonemes, speech prosody
+**Challenge:** Detecting deepfakes is crucial for maintaining trust in digital media.
 
 ---
 
-## 💡 How SyncWeld-Net Works
+## 2. Why Audio-Visual Synchronization?
+
+Modern deepfakes often have **lip-syncing issues** where the mouth movements don't perfectly match the audio.
+
+**Root Causes:**
+1. Generation artifacts: GANs struggle to maintain sync between visual and audio streams
+2. Temporal mismatches: Frame-by-frame audio generation leads to timing errors
+3. Frequency inconsistencies: Different generation pipelines for audio vs video
+
+**Our Approach:** Detect synchronization mismatches between:
+- Visual: Lip movements, facial expressions
+- Audio: Phonemes, speech prosody
+
+---
+
+## 3. How SyncWeld-Net Works
 
 ### The Core Insight
 
 > Real videos have perfect audio-visual sync. Deepfakes don't.
 
-### Step-by-Step
+### Pipeline
 
-1. **Extract Features**
-   - Visual → TimeSformer → 512D visual features
-   - Audio → Wav2Vec2.0 → 512D audio features
+1. **Feature Extraction**
+   - Visual: TimeSformer (8 frames) -> 512D features
+   - Audio: Wav2Vec2.0 -> 1024D features
 
 2. **Cross-Modal Fusion**
-   - Combine both modalities using attention
-   - Learn which features correlate
+   - Combine both modalities using cross-attention
+   - Learn correlated features between modalities
 
-3. **Detect Discordance**
-   - Use Contrastive Dissonance Loss to detect sync violations
-   - Learn that "mouth open + silent" = fake pattern
+3. **Dissonance Detection**
+   - Contrastive Dissonance Loss detects sync violations
+   - Example: "mouth open + silent" = fake pattern
 
-4. **Classify**
-   - Binary classification: Real vs Deepfake
+4. **Classification**
+   - Binary: Real vs Deepfake
 
 ---
 
-## 📊 Results
+## 4. Results
 
 ### Performance Summary
 | Metric | Value |
@@ -68,29 +73,31 @@ SyncWeld-Net detects these **synchronization mismatches** between:
 
 ---
 
-## 🔬 Key Visualizations
+## 5. Key Visualizations
 
-### ROC Curve Comparison with SOTA
+### 5.1 ROC Curve Comparison with SOTA
 
 ![ROC](experiment_results/paper_figures/forensic_comparative_roc.png)
 
-*Figure 1: SyncWeld-Net achieves AUC=0.992 vs Xception (0.945), Visual-Only (0.965), MesoNet (0.912)*
+**Figure 1:** SyncWeld-Net achieves AUC=0.992 vs Xception (0.945), Visual-Only (0.965), MesoNet (0.912)
 
-### Cross-Modal Alignment Heatmap
+### 5.2 Cross-Modal Alignment Heatmap
 
 ![Sync](experiment_results/paper_figures/forensic_alignment_heatmap.png)
 
-*Figure 2: Real videos show diagonal sync correlation (perfect alignment); deepfakes show scattered/off-diagonal patterns (sync mismatch)*
+**Figure 2:** Real videos show diagonal sync correlation (perfect alignment); deepfakes show scattered off-diagonal patterns (sync mismatch)
 
-### XAI: Grad-CAM Attention
+### 5.3 XAI: Grad-CAM Attention
 
 ![XAI](experiment_results/paper_figures/forensic_xai_attribution.png)
 
-*Figure 3: Model attention focuses on perioral region (67%) and eye reflections (23%), proving it detects lip-sync errors rather than background*
+**Figure 3:** Model attention focuses on perioral region (67%) and eye reflections (23%), proving it detects lip-sync errors rather than background
 
-### 10-Fold Cross-Validation Stability
+### 5.4 10-Fold Cross-Validation Stability
 
 ![CV](experiment_results/paper_figures/forensic_stability_boxplot.png)
+
+**Figure 4:** Consistent 97.2% ± 0.8% across 10 folds on multiple datasets
 
 *Figure 4: Consistent 97.2% ± 0.8% across 10 folds on FakeForensics, Celeb-DF, FaceForensics++*
 
@@ -98,13 +105,9 @@ SyncWeld-Net detects these **synchronization mismatches** between:
 
 ---
 
-## 🆚 Comparison with Other Approaches
+## 6. Comparison with Other Approaches
 
-Let's dive deep into a comprehensive comparison of Visual-Only, Audio-Only, and Multi-Modal approaches. This is a crucial discussion because understanding why each method succeeds or fails helps us appreciate SyncWeld-Net's unique contribution.
-
----
-
-### 🎭 The "Know Your Enemy" Conversation
+### 6.1 Overview
 
 **Researcher**: *"Why do we even need multi-modal detection? Can't we just use visual features like everyone else?"*
 
@@ -118,9 +121,7 @@ Let's dive deep into a comprehensive comparison of Visual-Only, Audio-Only, and 
 
 ---
 
-### 1️⃣ Visual-Only: The "Eye" Model
-
-#### What It Detects
+### 6.2 Visual-Only Model
 Visual-only models learn to spot **facial artifacts** left by generative models:
 
 1. **Blinking anomalies**: GANs often miss natural eye blink patterns
@@ -193,9 +194,7 @@ Video Frames → EfficientNet-B0 → TimeSformer Attention → CLS Token [512D] 
 
 ---
 
-### 2️⃣ Audio-Only: The "Ear" Model
-
-#### What It Detects
+### 6.3 Audio-Only Model
 Audio-only models analyze speech signals for:
 
 1. **Spectral fingerprints**: GAN-generated audio has characteristic frequency patterns
@@ -300,9 +299,7 @@ Wav2Vec2 is pre-trained on 50,000 hours of unlabeled speech using self-supervise
 
 ---
 
-### 3️⃣ SyncWeld-Net: The Multi-Modal Powerhouse
-
-#### The Game-Changing Insight
+### 6.4 SyncWeld-Net: Full Model
 
 **Key Question**: *"If audio-only fails because the audio is real, and visual-only misses some forgeries, what do we do?"*
 
@@ -432,7 +429,7 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
 
 > **SyncWeld-Net's 1.5% improvement over Visual-Only comes from detecting synchronization mismatches that are completely invisible to single-modality analysis. The 48.5% gap vs Audio-Only reveals a fundamental flaw in audio-only deepfake detection on cloned-audio datasets like FakeAVCeleb.**
 
-### 🏆 Win Margins
+### 6.5 Performance Gains
 
 | Comparison | Improvement |
 |------------|--------------|
@@ -441,38 +438,35 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
 
 ---
 
-### 💡 Why This Matters: The Theory
+---
 
-The comparison reveals fundamental insights about deepfake detection:
+## 7. Theoretical Insights
 
-#### 1. **Dataset Bias is Real**
+### 7.1 Dataset Bias
+
 Audio-only fails on FakeAVCeleb because the dataset uses **cloned audio** (real), not generated. This exposes a critical flaw in audio-only methods.
 
-#### 2. **Multi-Modal is Not Just Addition**
-Visual + Audio ≠ Multi-Modal
+### 7.2 Multi-Modal is Not Just Addition
 
-**Addition**: Concatenating features (gives ~96%, no improvement)
+- Addition: Concatenating features (gives ~96%, no improvement)
+- Multi-Modal: Finding cross-modal inconsistencies (gives 97.5%)
 
-**Multi-Modal**: Finding cross-modal inconsistencies (gives **97.5%**)
-
-The key is **Contrastive Dissonance Loss** - it explicitly learns that:
+The key is **Contrastive Dissonance Loss** - it learns:
 - Real videos: "mouth open" → audible "phoneme" → synchronized
 - Fake videos: "mouth open" → silent/gibberish → **mismatched**
 
-#### 3. What Gets Detected
+### 7.3 Detection Capability
 
 | Fake Type | Visual-Only | Audio-Only | SyncWeld-Net |
 |-----------|-------------|------------|--------------|
-| Poor face swap | Detects | Misses | Detects |
-| Lip-sync error | Misses | Misses | Detects |
-| Perfect face + real audio | Misses | Misses | Detects |
-| Compressed artifacts | Detects | Detects | Detects |
-
-**SyncWeld-Net catches what others miss because it looks at the relationship, not individual components.**
+| Poor face swap | Yes | No | Yes |
+| Lip-sync error | No | No | Yes |
+| Perfect face + real audio | No | No | Yes |
+| Compressed artifacts | Yes | Yes | Yes |
 
 ---
 
-## 🛠️ Installation
+## 8. Installation
 
 ```bash
 # Clone repository
@@ -490,7 +484,7 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Usage Examples
+## 12. Usage Examples
 
 ### Training the Model
 
@@ -514,7 +508,7 @@ python evaluate_model.py --checkpoint phase1_checkpoints/syncweld_best.pth
 
 ---
 
-## 🏗️ Architecture
+## 9. Architecture
 
 ```
 Input Video (4s, 8 frames)
@@ -539,7 +533,7 @@ Input Video (4s, 8 frames)
 
 ---
 
-## 📈 Training Details
+## 10. Training Details
 
 | Parameter | Value |
 |-----------|-------|
@@ -553,7 +547,7 @@ Input Video (4s, 8 frames)
 
 ---
 
-## 📊 Detailed Results
+## 11. Detailed Results
 
 ### Baseline Comparison
 
@@ -573,7 +567,7 @@ Input Video (4s, 8 frames)
 
 ---
 
-## 📁 Project Structure
+## 13. Project Structure
 
 ```
 SyncWeld-Net/
@@ -594,7 +588,7 @@ SyncWeld-Net/
 
 ---
 
-## 🔧 Requirements
+## 14. Requirements
 
 ```
 torch>=2.0.0
@@ -607,7 +601,7 @@ seaborn>=0.12.0
 
 ---
 
-## 📖 Citation
+## 15. Citation
 
 ```bibtex
 @article{syncweld2026,
@@ -619,7 +613,7 @@ seaborn>=0.12.0
 
 ---
 
-## 🙏 Acknowledgments
+## 16. Acknowledgments
 
 - TimeSformer: https://github.com/facebookresearch/TimeSformer
 - Wav2Vec2: https://github.com/facebookresearch/wav2vec2
