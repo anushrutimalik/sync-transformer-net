@@ -4,7 +4,11 @@
 
 **Author**: Angel Gupta
 
+**License**: Academic use only - Contact for implementation details
+
 A deep learning framework for detecting face swapping and lip-syncing deepfakes through audio-visual cross-modal synchronization analysis.
+
+> Note: Core implementation details available upon request for research collaboration.
 
 ---
 
@@ -313,7 +317,7 @@ SyncWeld-Net combines **TimeSformer** (visual) + **Wav2Vec2** (audio) with **Cro
 
 *Figure 1: The model learns to align audio and visual features, detecting when they don't match.*
 
-**Key Innovation: Contrastive Dissonance Loss**
+**Key Innovation**
 
 The game-changer is detecting **when audio and video don't match**:
 
@@ -325,26 +329,15 @@ The game-changer is detecting **when audio and video don't match**:
 |---------|-----------------|-------------------|
 | **Visual** | Lip movement, eye blinks, facial expressions | Artifacts in face regions |
 | **Audio** | Phonemes, speech prosody, voice characteristics | Spectral anomalies |
-| **Cross-Modal** | Audio-visual synchronization | **Lip-sync mismatches** |
-
-**How Dissonance Detection Works:**
-
-```
-Real Video:     Mouth moves "A" → Audio says "A" → Synchronized ✓
-Fake Video:   Mouth moves "A" → Audio says silent → Mismatch ✗
-```
+| **Cross-Modal** | Audio-visual synchronization | Lip-sync mismatches |
 
 | Step | Component | Function |
 |------|----------|----------|
-| 1 | TimeSformer | Extract visual features (512D) |
-| 2 | Wav2Vec2.0 | Extract audio features (1024D) |
-| 3 | Cross-Modal Attention | Align modalities |
-| 4 | Dissonance Analyzer | Detect sync violations |
-| 5 | Classifier | Final prediction |
-        dissonance_score = self.dissonance_analyzer(visual_features, audio_features)
-        
-        return self.classifier(fused_features), audio_features, visual_features
-```
+| 1 | TimeSformer | Extract visual features |
+| 2 | Wav2Vec2.0 | Extract audio features |
+| 3 | Cross-Modal Fusion | Align modalities |
+| 4 | Sync Analysis | Detect synchronization |
+| 5 | Classifier | Binary prediction |
 
 **Pipeline**:
 ```
@@ -580,16 +573,22 @@ SyncWeld-Net/
 ├── config/                       # Model configurations
 ├── datasets/                      # FakeAVCeleb, FaceForensics++
 ├── models/
-│   ├── syncweld.py               # Main model
-│   └── size_invariant_timesformer.py
+│   ├── syncweld.py               # Main model (novel)
+│   ├── size_invariant_timesformer.py  # Based on TimeSformer*
+│   ├── baseline.py                 # Baseline comparisons
+│   └── efficientnet/              # Based on EfficientNet*
 ├── phase1_checkpoints/
-│   └── syncweld_best.pth         # Best model weights
+│   └── syncweld_best.pth         # Model weights (not in repo)
 ├── experiment_results/
 │   └── paper_figures/             # 16 publication figures
 ├── train_syncweld.py             # Training script
 ├── evaluate_model.py             # Evaluation
 ├── baseline_models.py             # Baseline comparisons
+├── images/                      # Architecture visualizations
 └── README.md                     # This file
+
+*External libraries: TimeSformer (Facebook), EfficientNet (Google)
+Note: Model weights available upon request.
 ```
 
 ---
