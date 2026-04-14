@@ -543,6 +543,14 @@ Input Video (4s, 8 frames)
 | Frames per Segment | 8 |
 | Image Size | 160×160 |
 
+### Hardware & Training Time
+
+| Resource | Specification |
+|----------|---------------|
+| GPU | NVIDIA RTX 4050 Laptop (6GB VRAM) |
+| Training Time | Multi-day GPU experimentation |
+| Total Experiments | Phase 1-4: Baseline, Ablation, 10-Fold CV |
+
 ---
 
 ## 11. Detailed Results
