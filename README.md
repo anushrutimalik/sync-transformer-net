@@ -138,7 +138,7 @@ Visual-only models learn to spot **facial artifacts** left by generative models:
 
 The TimeSformer model processes video frames using **spatial-temporal attention** - analyzing both space (pixels) and time (frames) simultaneously.
 
-<img src="images/size_invariant_timesformer.gif" width="400"/>
+![TimeSformer](images/size_invariant_timesformer.gif)
 
 *Figure 1: TimeSformer processes each frame and applies attention across all frames to capture motion patterns.*
 
@@ -148,7 +148,7 @@ TimeSformer divides the problem into two attention types:
 1. **Spatial Attention**: Within each frame - focuses on local regions (eyes, mouth, face shape)
 2. **Temporal Attention**: Across frames - tracks motion and changes over time
 
-<img src="images/temporal_positional_embedding_0.gif" width="400"/>
+![Temporal Embedding](images/temporal_positional_embedding_0.gif)
 
 *Figure 2: Temporal embeddings encode the position of each frame in the 4-second video clip.*
 
@@ -165,7 +165,7 @@ Video Frames → EfficientNet-B0 → TimeSformer Attention → CLS Token [512D] 
 | 4 | CLS Token | Global video representation [512D] |
 | 5 | FC Layer | Binary classification |
 
-<img src="images/attention_analysis.gif" width="400"/>
+![Attention Analysis](images/attention_analysis.gif)
 
 *Figure 3: The model learns to focus on discriminative regions (lips, eyes) for deepfake detection.*
 
@@ -264,7 +264,7 @@ Wav2Vec2 is pre-trained on 50,000 hours of unlabeled speech using self-supervise
 - **Speaker characteristics**: Voice timbre, pitch
 - **Temporal patterns**: Speech rhythm and flow
 
-<img src="images/sequence_generation_0.gif" width="400"/>
+![Sequence Generation](images/sequence_generation_0.gif)
 
 *Figure 1: Wav2Vec2 processes raw audio into learned representations.*
 
@@ -313,7 +313,7 @@ Wav2Vec2 is pre-trained on 50,000 hours of unlabeled speech using self-supervise
 
 SyncWeld-Net combines **TimeSformer** (visual) + **Wav2Vec2** (audio) with **Cross-Modal Attention** to detect synchronization mismatches.
 
-<img src="images/divided_space_time_attention.gif" width="400"/>
+![Cross-Modal Attention](images/divided_space_time_attention.gif)
 
 *Figure 1: The model learns to align audio and visual features, detecting when they don't match.*
 
@@ -321,7 +321,7 @@ SyncWeld-Net combines **TimeSformer** (visual) + **Wav2Vec2** (audio) with **Cro
 
 The game-changer is detecting **when audio and video don't match**:
 
-<img src="images/multi_face_size_invariant_timesformer.gif" width="400"/>
+![Multi-Face Attention](images/multi_face_size_invariant_timesformer.gif)
 
 *Figure 2: Our model processes multiple faces simultaneously to detect identity mismatches.*
 
@@ -513,7 +513,7 @@ Input Video (4s, 8 frames)
 
 ### Key Components
 
-<img src="images/identity_attention.gif" width="400"/>
+![Identity Attention](images/identity_attention.gif)
 
 | Component | Description |
 |-----------|-------------|
