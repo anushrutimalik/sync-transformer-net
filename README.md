@@ -370,62 +370,58 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
 
 ---
 
-### Phase 2: Baseline Comparison (10,000 Test Samples)
+### 6.2 Phase 2: Baseline Comparison
+
+**Test Set:** 10,000 samples (5,000 Real + 5,000 Fake)
 
 | Model | Description | Accuracy | Precision | Recall | F1 | AUC |
 |-------|-------------|----------|-----------|--------|-----|-----|
-| **SyncWeld-Net** | TimeSformer + Wav2Vec2 + Cross-Modal Fusion | **97.5%** | **97.4%** | **97.6%** | **97.5%** | **99.2%** |
-| SyncWeld-SVM | SyncWeld features + SVM classifier | 95.0% | 94.0% | 96.0% | 95.0% | 98.0% |
-| SyncWeld-ELM | SyncWeld features + ELM classifier | 93.0% | 92.0% | 94.0% | 93.0% | 97.0% |
-| Visual-Only | TimeSformer (visual frames only) | 96.0% | 95.0% | 97.0% | 96.0% | 99.0% |
-| Audio-Only | Wav2Vec2.0 (audio only) | 49.0% | 48.0% | 100% | 65.0% | 62.0% |
+| **SyncWeld-Net** | TimeSformer + Wav2Vec2 + Fusion | **97.5%** | **97.4%** | **97.6%** | **97.5%** | **99.2%** |
+| SyncWeld-SVM | SyncWeld + SVM classifier | 95.0% | 94.0% | 96.0% | 95.0% | 98.0% |
+| SyncWeld-ELM | SyncWeld + ELM classifier | 93.0% | 92.0% | 94.0% | 93.0% | 97.0% |
+| Visual-Only | TimeSformer only | 96.0% | 95.0% | 97.0% | 96.0% | 99.0% |
+| Audio-Only | Wav2Vec2.0 only | 49.0% | 48.0% | 100% | 65.0% | 62.0% |
 
----
+### 6.2.1 Model Architecture
 
-#### Model Architecture Breakdown
+| Model | Visual Encoder | Audio Encoder | Fusion | Classifier | Dim |
+|-------|---------------|---------------|--------|------------|-----|
+| SyncWeld-Net | TimeSformer | Wav2Vec2-Large | Cross-Modal | FC+Dissonance | 1536 |
+| SyncWeld-SVM | TimeSformer | Wav2Vec2-Large | Concatenation | SVM | 1536 |
+| SyncWeld-ELM | TimeSformer | Wav2Vec2-Large | Concatenation | ELM | 1536 |
+| Visual-Only | TimeSformer | - | - | FC | 512 |
+| Audio-Only | - | Wav2Vec2-Large | - | FC | 1024 |
 
-| Model | Visual Encoder | Audio Encoder | Fusion | Classifier | Feature Dim |
-|-------|-------------|-------------|--------|-----------|------------|
-| **SyncWeld-Net** | TimeSformer + EfficientNet-B0 | Wav2Vec2-Large | Cross-Modal Attention | FC + Dissonance | 1536 |
-| SyncWeld-SVM | TimeSformer + EfficientNet-B0 | Wav2Vec2-Large | Concatenation | SVM (RBF kernel) | 1536 |
-| SyncWeld-ELM | TimeSformer + EfficientNet-B0 | Wav2Vec2-Large | Concatenation | Extreme Learning Machine | 1536 |
-| Visual-Only | TimeSformer + EfficientNet-B0 | - | - | FC(512→256→1) | 512 |
-| Audio-Only | - | Wav2Vec2-Large | - | FC(1024→256→1) | 1024 |
-
-### Confusion Matrix (10,000 Test Samples)
+### 6.2.2 Confusion Matrix
 
 ![CM](experiment_results/paper_figures/confusion_matrix_10k.png)
 
-*97.5% accuracy on 10,000 test samples (5,000 Real + 5,000 Fake)*
-
 | | Predicted Real | Predicted Fake |
 |---|----------------|----------------|
-| **Actual Real** | 4,875 (TN) | 125 (FP) |
-| **Actual Fake** | 125 (FN) | 4,875 (TP) |
+| Actual Real | 4,875 (TN) | 125 (FP) |
+| Actual Fake | 125 (FN) | 4,875 (TP) |
 
 | Metric | Count |
 |--------|-------|
-| **True Positives** | 4,875 |
-| **True Negatives** | 4,875 |
-| **False Positives** | 125 |
-| **False Negatives** | 125 |
-| **Total Correct** | 9,750 / 10,000 |
+| True Positives | 4,875 |
+| True Negatives | 4,875 |
+| False Positives | 125 |
+| False Negatives | 125 |
+| Total Correct | 9,750 / 10,000 |
 
 ---
 
-### Phase 3: Ablation Study
+### 6.3 Phase 3: Ablation Study
 
 | Configuration | Accuracy | Delta |
 |--------------|----------|-------|
-| **Full Model** | **97.5%** | — |
+| Full Model | 97.5% | - |
 | Without Contrastive Loss | 91.0% | -6.5% |
 | Without Dissonance Penalty | 93.0% | -4.5% |
 | Audio Frozen | 89.0% | -8.5% |
 | Visual Frozen | 92.0% | -5.5% |
 
----
-
-#### Key Finding
+### 6.4 Key Finding
 
 > **SyncWeld-Net's 1.5% improvement over Visual-Only comes from detecting synchronization mismatches that are completely invisible to single-modality analysis. The 48.5% gap vs Audio-Only reveals a fundamental flaw in audio-only deepfake detection on cloned-audio datasets like FakeAVCeleb.**
 
