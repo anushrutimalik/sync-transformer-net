@@ -66,25 +66,6 @@ SyncWeld-Net detects these **synchronization mismatches** between:
 | **AUC** | **99.18%** |
 | **10-Fold CV** | 97.2% ± 0.8% |
 
-### Confusion Matrix (10,000 Test Samples)
-
-![CM](experiment_results/paper_figures/confusion_matrix_10k.png)
-
-*Figure: 97.5% accuracy on 10,000 test samples (5,000 Real + 5,000 Fake)*
-
-| | Predicted Real | Predicted Fake |
-|---|----------------|----------------|
-| **Actual Real** | 4,875 (TN) | 125 (FP) |
-| **Actual Fake** | 125 (FN) | 4,875 (TP) |
-
-| Metric | Count |
-|--------|-------|
-| **True Positives** | 4,875 |
-| **True Negatives** | 4,875 |
-| **False Positives** | 125 |
-| **False Negatives** | 125 |
-| **Total Correct** | 9,750 / 10,000 |
-
 ---
 
 ## 🔬 Key Visualizations
@@ -413,6 +394,25 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
 | SyncWeld-ELM | TimeSformer + EfficientNet-B0 | Wav2Vec2-Large | Concatenation | Extreme Learning Machine | 1536 |
 | Visual-Only | TimeSformer + EfficientNet-B0 | - | - | FC(512→256→1) | 512 |
 | Audio-Only | - | Wav2Vec2-Large | - | FC(1024→256→1) | 1024 |
+
+### Confusion Matrix (10,000 Test Samples)
+
+![CM](experiment_results/paper_figures/confusion_matrix_10k.png)
+
+*97.5% accuracy on 10,000 test samples (5,000 Real + 5,000 Fake)*
+
+| | Predicted Real | Predicted Fake |
+|---|----------------|----------------|
+| **Actual Real** | 4,875 (TN) | 125 (FP) |
+| **Actual Fake** | 125 (FN) | 4,875 (TP) |
+
+| Metric | Count |
+|--------|-------|
+| **True Positives** | 4,875 |
+| **True Negatives** | 4,875 |
+| **False Positives** | 125 |
+| **False Negatives** | 125 |
+| **Total Correct** | 9,750 / 10,000 |
 
 ---
 
