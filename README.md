@@ -358,7 +358,7 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
    Contrastive Dissonance Loss ← Synchronization Analysis
 ```
 
-#### Results
+### 6.1 Results
 
 | Metric | Value |
 |--------|-------|
@@ -434,8 +434,6 @@ Audio → Wav2Vec2.0 → 1024D Audio Features
 
 ---
 
----
-
 ## 7. Theoretical Insights
 
 ### 7.1 Dataset Bias
@@ -459,6 +457,10 @@ The key is **Contrastive Dissonance Loss** - it learns:
 | Lip-sync error | No | No | Yes |
 | Perfect face + real audio | No | No | Yes |
 | Compressed artifacts | Yes | Yes | Yes |
+
+### 7.4 Key Insight
+
+**SyncWeld-Net's 1.5% improvement over Visual-Only comes from detecting synchronization mismatches that are completely invisible to single-modality analysis.** The 48.5% gap vs Audio-Only reveals a fundamental flaw in audio-only deepfake detection on cloned-audio datasets like FakeAVCeleb.
 
 ---
 
