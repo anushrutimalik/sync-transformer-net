@@ -2,7 +2,7 @@
 
 **Paper**: *SyncWeld-Net: Detecting Audio-Visual Synchronization Mismatches in Deepfake Videos*
 
-**Author**: Angel Gupta
+**Author**: Anushruti
 
 **License**: Academic use only - Contact for implementation details
 
